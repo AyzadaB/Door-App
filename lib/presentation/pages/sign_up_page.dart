@@ -2,7 +2,7 @@ import 'package:door_app/data/models/user_model.dart';
 import 'package:door_app/data/repositories/user_repository.dart';
 import 'package:door_app/logic/cubit/sign_up_bloc.dart';
 import 'package:door_app/logic/cubit/sign_up_state.dart';
-import 'package:door_app/logic/sign_up_event.dart';
+import 'package:door_app/logic/cubit/sign_up_event.dart';
 import 'package:door_app/presentation/pages/home_page.dart';
 import 'package:door_app/presentation/widgets/btn_widget.dart';
 import 'package:door_app/presentation/widgets/logo_widget.dart';

@@ -1,4 +1,4 @@
-import 'package:door_app/logic/sign_up_event.dart';
+import 'package:door_app/logic/cubit/sign_up_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/utils/validation_helper.dart';
 import '../../data/models/user_model.dart';
