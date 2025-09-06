@@ -1,4 +1,3 @@
-import 'package:door_app/presentation/pages/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
 class BtnWidget extends StatelessWidget {

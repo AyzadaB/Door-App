@@ -1,5 +1,9 @@
-import 'package:door_app/logic/cubit/sign_up_cubit.dart';
+import 'package:door_app/data/models/user_model.dart';
+import 'package:door_app/data/repositories/user_repository.dart';
+import 'package:door_app/logic/cubit/sign_up_bloc.dart';
 import 'package:door_app/logic/cubit/sign_up_state.dart';
+import 'package:door_app/logic/sign_up_event.dart';
+import 'package:door_app/presentation/pages/home_page.dart';
 import 'package:door_app/presentation/widgets/btn_widget.dart';
 import 'package:door_app/presentation/widgets/logo_widget.dart';
 import 'package:door_app/presentation/widgets/sign_up_widget.dart';
@@ -8,6 +12,7 @@ import 'package:door_app/presentation/widgets/text_field_widget.dart';
 import 'package:door_app/presentation/widgets/title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -27,15 +32,19 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SignUpCubit(),
+      create: (_) => SignUpBloc(UserRepository(Hive.box<UserModel>('users'))),
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-          child: BlocConsumer<SignUpCubit, SignUpState>(
+          child: BlocConsumer<SignUpBloc, SignUpState>(
             listener: (context, state) {
               if (state is SignUpSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Катталуу ийгиликтүү ✅")),
+                );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomePage()),
                 );
               } else if (state is SignUpError) {
                 ScaffoldMessenger.of(
@@ -73,13 +82,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: state is SignUpLoading
                         ? null
                         : () {
-                            context.read<SignUpCubit>().signUp(
-                              firstName: _firstName.text,
-                              lastName: _lastName.text,
-                              phone: _phone.text,
-                              login: _login.text,
-                              password: _password.text,
-                              confirmPassword: _confirmPassword.text,
+                            context.read<SignUpBloc>().add(
+                              SignUpSubmitted(
+                                firstName: _firstName.text,
+                                lastName: _lastName.text,
+                                phone: _phone.text,
+                                login: _login.text,
+                                password: _password.text,
+                                confirmPassword: _confirmPassword.text,
+                              ),
                             );
                           },
                   ),

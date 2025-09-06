@@ -1,4 +1,7 @@
-import 'package:door_app/logic/cubit/login_cubit.dart';
+import 'package:door_app/data/models/user_model.dart';
+import 'package:door_app/data/repositories/user_repository.dart';
+import 'package:door_app/logic/cubit/login_bloc.dart';
+import 'package:door_app/logic/cubit/login_event.dart';
 import 'package:door_app/logic/cubit/login_state.dart';
 import 'package:door_app/presentation/pages/home_page.dart';
 import 'package:door_app/presentation/widgets/btn_widget.dart';
@@ -9,6 +12,7 @@ import 'package:door_app/presentation/widgets/text_field_widget.dart';
 import 'package:door_app/presentation/widgets/title_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -24,11 +28,11 @@ class _LogInPageState extends State<LogInPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginCubit(),
+      create: (_) => LoginBloc(UserRepository(Hive.box<UserModel>('users'))),
       child: Scaffold(
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: BlocConsumer<LoginCubit, LoginState>(
+          child: BlocConsumer<LoginBloc, LoginState>(
             listener: (context, state) {
               if (state is LoginSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -70,9 +74,11 @@ class _LogInPageState extends State<LogInPage> {
                     onPressed: state is LoginLoading
                         ? () {}
                         : () {
-                            context.read<LoginCubit>().login(
-                              login: _loginController.text,
-                              password: _passwordController.text,
+                            context.read<LoginBloc>().add(
+                              LoginSubmitted(
+                                login: _loginController.text,
+                                password: _passwordController.text,
+                              ),
                             );
                           },
                   ),
